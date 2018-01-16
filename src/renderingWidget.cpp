@@ -143,7 +143,11 @@ void RenderingWidget::drawContents()
         if(m_drawRay){
             glUniform3f(m_flatProgram.uniform("color"),0.9f,0.9f,0.9f);
             Line::draw(&m_flatProgram,m_ray.origin,m_ray.at(1000));
+            if(m_hit.foundIntersection()){
+                Point::draw(&m_flatProgram,m_hit.intersection());}
+
         }
+
     }
 
     glViewport(0, 0, mFBSize[0], mFBSize[1]);
@@ -312,6 +316,7 @@ void RenderingWidget::select(const Point2i &point)
 {
     ///TODO : trace a ray trough the pixel \param point
     m_scene->camera()->convertClickToLine(point, m_ray.origin, m_ray.direction);
+    m_scene->intersect(m_ray,m_hit);
     //throw SireException("RenderingWidget::select not implemented yet.");
 
     m_drawRay = true;

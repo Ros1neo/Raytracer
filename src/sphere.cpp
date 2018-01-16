@@ -1,6 +1,6 @@
 #include "sphere.h"
 #include <iostream>
-
+#include <cmath>
 //--------------------------------------------------------------------------------
 // icosahedron data
 //--------------------------------------------------------------------------------
@@ -119,10 +119,40 @@ const Eigen::AlignedBox3f& Sphere::AABB() const
 bool Sphere::intersect(const Ray& ray, Hit& hit) const
 {
     /// TODO: compute ray-sphere intersection
+    float Delta;
+    Vector3f O = ray.origin;
+    Vector3f D = ray.direction;
+    float a = D.squaredNorm();
+    float b = 2*O.dot(D);
+    Delta = pow(b,2)-4*a*(O.squaredNorm()-pow(m_radius,2));
+    if (Delta<0)
+            return false;
+    else{
+        float A = (-b-sqrt(Delta))/2.0/a;
+        float B = (-b+sqrt(Delta))/2.0/a;
+        if (A<=0){
+            if(B<=0)
+                return false;
+            else{
+                hit.setT(B);
+                return true;}}
+        else{
+            if (B<=0){
+                hit.setT(A);
+               return true;}
+            else{
+                if (A<B){
+                    hit.setT(A);
+                    return true;}
+                else{
+                    hit.setT(B);
+                    return true;}
+            }
+       }
+    }
 
-    throw SireException("Sphere::intersect not implemented yet.");
+    //throw SireException("Sphere::intersect not implemented yet.");
 
-    return false;
 }
 
 REGISTER_CLASS(Sphere, "sphere")
