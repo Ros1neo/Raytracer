@@ -234,6 +234,13 @@ void render(Scene* scene, ImageBlock* result, std::string outputName, bool* done
     ///  3. call the integartor to compute the radiance along this ray
     ///  4. write this radiance in the result image
 
+    int h = scene->camera()->vpHeight();
+    int w = scene->camera()->vpWidth();
+    for (i = 0; i<h*w; i++){
+        //Point2i Point à faire parcourir
+        Ray ray_temp;
+        scene->camera()->convertClickToLine(Point,ray_temp.origin,ray_temp.direction);
+    }
     t = clock() - t;
     std::cout << "Raytracing time : " << float(t)/CLOCKS_PER_SEC << "s"<<std::endl;
 
