@@ -9,8 +9,8 @@
  <!-- Render the scene as viewed by a perspective camera -->
  <camera type="perspective">
    <float name="fieldOfView" value="45.0" /> 
-   <integer name="width" value="400"/>
-   <integer name="height" value="400"/>
+   <integer name="width" value="4"/>
+   <integer name="height" value="4"/>
    <integer name="samples" value="1"/>
    <transform name="toWorld">
      <rotate value="-0.623147, -0.270643, -0.246995, -0.690966"/>

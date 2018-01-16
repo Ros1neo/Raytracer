@@ -12,7 +12,8 @@ public:
       /// TODO:
       ///  1. Find the surface that is visible in the requested direction
       ///  2. Return the object ambiant color
-
+    Hit hit;
+    scene->intersect(ray,hit);
       return Color3f(0.0f);
     }
 

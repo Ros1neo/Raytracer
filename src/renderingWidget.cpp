@@ -15,6 +15,7 @@ RenderingWidget::RenderingWidget() :
 {
     m_drawCamera = false;
     m_drawRay = false;
+    m_drawRays = false;
     m_renderingDone = true;
 
     /* Add some UI elements to adjust the exposure value */
@@ -25,16 +26,16 @@ RenderingWidget::RenderingWidget() :
     m_slider->setValue(0.5f);
     m_slider->setFixedWidth(150);
     m_slider->setCallback(
-        [&](float value) {
-            m_scale = std::pow(2.f, (value - 0.5f) * 20);
-        }
+                [&](float value) {
+        m_scale = std::pow(2.f, (value - 0.5f) * 20);
+    }
     );
     m_checkbox = new CheckBox(m_panel,"srgb");
     m_checkbox->setChecked(true);
     m_checkbox->setCallback(
-        [&](bool value) {
-            m_srgb = value ? 1 : 0;
-        }
+                [&](bool value) {
+        m_srgb = value ? 1 : 0;
+    }
     );
 
     m_panel->setSize(Eigen::Vector2i(512,36));
@@ -88,6 +89,7 @@ void RenderingWidget::initializeGL()
 
 void RenderingWidget::drawContents()
 {
+
     if(m_resultImage) // raytracing in progress
     {
         /* Reload the partially rendered image onto the GPU */
@@ -142,10 +144,25 @@ void RenderingWidget::drawContents()
 
         if(m_drawRay){
             glUniform3f(m_flatProgram.uniform("color"),0.9f,0.9f,0.9f);
-            Line::draw(&m_flatProgram,m_ray.origin,m_ray.at(1000));
-            if(m_hit.foundIntersection()){
-                Point::draw(&m_flatProgram,m_hit.intersection());}
+            //Line::draw(&m_flatProgram,m_ray.origin,m_ray.at(1000));
 
+            if(m_hit.foundIntersection()){
+                Line::draw(&m_flatProgram,m_ray.origin,m_ray.at(m_hit.t()));
+                Point::draw(&m_flatProgram,m_hit.intersection());}
+            else
+                Line::draw(&m_flatProgram,m_ray.origin,m_ray.at(1000));
+
+        }
+        if(m_drawRays){
+            int h = m_scene->camera()->vpHeight();
+            int w = m_scene->camera()->vpWidth();
+            Ray ray_temp;
+            for (int i = 0; i<h; i++){
+                for(int j=0;j<w;j++){
+                    Point2i point(i,j);//Point à faire parcourir
+                    m_scene->camera()->convertClickToLine(point,ray_temp.origin,ray_temp.direction);
+                    Line::draw(&m_flatProgram,ray_temp.origin,ray_temp.at(1));
+                }}
         }
 
     }
@@ -234,13 +251,6 @@ void render(Scene* scene, ImageBlock* result, std::string outputName, bool* done
     ///  3. call the integartor to compute the radiance along this ray
     ///  4. write this radiance in the result image
 
-    int h = scene->camera()->vpHeight();
-    int w = scene->camera()->vpWidth();
-    for (i = 0; i<h*w; i++){
-        //Point2i Point à faire parcourir
-        Ray ray_temp;
-        scene->camera()->convertClickToLine(Point,ray_temp.origin,ray_temp.direction);
-    }
     t = clock() - t;
     std::cout << "Raytracing time : " << float(t)/CLOCKS_PER_SEC << "s"<<std::endl;
 
@@ -276,6 +286,12 @@ bool RenderingWidget::keyboardEvent(int key, int scancode, bool press, int modif
         case GLFW_KEY_H:
         {
             m_drawCamera = !m_drawCamera;
+            drawAll();
+            return true;
+        }
+        case GLFW_KEY_J:
+        {
+            m_drawRays = !m_drawRays;
             drawAll();
             return true;
         }

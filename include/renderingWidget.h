@@ -25,6 +25,7 @@ class RenderingWidget : public nanogui::Screen
     Ray m_ray;
     Hit m_hit;
     bool m_drawRay;
+    bool m_drawRays;
 
     enum TrackMode {
       TM_NO_TRACK=0, TM_ROTATE_AROUND, TM_ZOOM,
