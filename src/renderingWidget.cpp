@@ -144,23 +144,22 @@ void RenderingWidget::drawContents()
 
         if(m_drawRay){
             glUniform3f(m_flatProgram.uniform("color"),0.9f,0.9f,0.9f);
-            //Line::draw(&m_flatProgram,m_ray.origin,m_ray.at(1000));
 
             if(m_hit.foundIntersection()){
-                Line::draw(&m_flatProgram,m_ray.origin,m_ray.at(m_hit.t()));
-                Point::draw(&m_flatProgram,m_hit.intersection());}
+                Line::draw(&m_flatProgram,m_ray.origin,m_ray.at(m_hit.t())); //tracer le rayon jusqu'à l'intersection
+                Point::draw(&m_flatProgram,m_hit.intersection());}           //tracer l'intersection
             else
-                Line::draw(&m_flatProgram,m_ray.origin,m_ray.at(1000));
+                Line::draw(&m_flatProgram,m_ray.origin,m_ray.at(1000));      // tracer le rayon très long
 
         }
-        if(m_drawRays){
+        if(m_drawRays){ //Si on appuie sur la touche J
             int h = m_scene->camera()->vpHeight();
             int w = m_scene->camera()->vpWidth();
             Ray ray_temp;
             for (int i = 0; i<h; i++){
                 for(int j=0;j<w;j++){
                     Point2i point(i,j);//Point à faire parcourir
-                    m_scene->camera()->convertClickToLine(point,ray_temp.origin,ray_temp.direction);
+                    m_scene->camera()->convertClickToLine(point,ray_temp.origin,ray_temp.direction); // Comment stocker la direction des centres plutôt?
                     Line::draw(&m_flatProgram,ray_temp.origin,ray_temp.at(1));
                 }}
         }
