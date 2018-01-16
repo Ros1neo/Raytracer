@@ -331,7 +331,7 @@ void Camera::draw(nanogui::GLShader* prg)
         // grille
         float ym = tan(mFovY*0.5);
         float xm = ((float)mVpWidth)*(ym*1.0/mVpHeight);
-        float zm = 0.75f;
+        float zm = 1.0f;
         for(uint x=1; x<mVpWidth; ++x){
             mPoints.push_back(Point3f(xm*(x*2.0/mVpWidth-1.0),ym,-zm));
             mPoints.push_back(Point3f(xm*(x*2.0/mVpWidth-1.0),-ym,-zm));

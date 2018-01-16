@@ -55,6 +55,7 @@ void Scene::attachShaderToLights(nanogui::GLShader* prg)
 /** Search for the nearest intersection between the ray and the object list */
 void Scene::intersect(const Ray& ray, Hit& hit) const
 {
+    hit = Hit();
     for(uint i=0; i<m_shapeList.size(); ++i)
     {
         // apply transformation
@@ -78,7 +79,9 @@ void Scene::intersect(const Ray& ray, Hit& hit) const
             Point3f x = local_ray.at(h.t());
             hit.setNormal( (m_shapeList[i]->transformation() * h.normal()).normalized() );
             hit.setT( (m_shapeList[i]->transformation() * x - ray.origin).norm() );
+            hit.setIntersection(ray.at(hit.t()));
             hit.setTexcoord(h.texcoord());
+
         }else{
             hit.setT(old_t);
         }

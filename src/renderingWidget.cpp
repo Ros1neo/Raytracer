@@ -142,6 +142,7 @@ void RenderingWidget::drawContents()
 
         if(m_drawRay){
             glUniform3f(m_flatProgram.uniform("color"),0.9f,0.9f,0.9f);
+            Line::draw(&m_flatProgram,m_ray.origin,m_ray.at(1000));
         }
     }
 
@@ -310,8 +311,8 @@ void RenderingWidget::dropEvent(const std::vector<std::string> &filenames)
 void RenderingWidget::select(const Point2i &point)
 {
     ///TODO : trace a ray trough the pixel \param point
-
-    throw SireException("RenderingWidget::select not implemented yet.");
+    m_scene->camera()->convertClickToLine(point, m_ray.origin, m_ray.direction);
+    //throw SireException("RenderingWidget::select not implemented yet.");
 
     m_drawRay = true;
     drawAll();
